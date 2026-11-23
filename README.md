@@ -25,9 +25,12 @@ As dependências utilizadas estão registradas no arquivo `requirements.txt`.
 
 ## 2. Conjunto de dados
 
-**Nome:** Crop Recommendation Dataset  
-**Autor da publicação:** Atharva Ingle  
-**Plataforma:** Kaggle  
+**Nome:** Crop Recommendation Dataset
+
+**Autor da publicação:** Atharva Ingle
+
+**Plataforma:** Kaggle
+
 **Fonte:** https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset
 
 O dataset contém:
@@ -69,21 +72,18 @@ O CSV original não é incluído no repositório. Para reproduzir os experimento
 - A aplicação online não precisa do CSV original, pois utiliza o pipeline salvo
 
 Clone o repositório:
-
 ```bash
 git clone https://github.com/Hugo0077/AgroSmart-AI.git
 cd AgroSmart-AI
 ```
 
 ### Criar ambiente virtual — Windows PowerShell
-
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
 Instalar as dependências:
-
 ```powershell
 python -m pip install -r requirements.txt
 ```
@@ -91,7 +91,6 @@ python -m pip install -r requirements.txt
 ### Preparação dos dados
 
 Baixe o dataset no Kaggle, extraia o arquivo CSV e coloque-o no seguinte caminho:
-
 ```text
 data/Crop_recommendation.csv
 ```
@@ -101,7 +100,6 @@ data/Crop_recommendation.csv
 Como o repositório inclui o pipeline treinado em `models/model.joblib`, não é necessário repetir o treinamento para utilizar a aplicação.
 
 Execute:
-
 ```powershell
 python -m streamlit run app/main.py
 ```
@@ -117,7 +115,6 @@ O sistema também valida entradas e apresenta avisos quando os dados informados 
 ## 5. Reproduzir os experimentos
 
 ### Análise exploratória
-
 ```powershell
 python src/inspect_data.py
 python src/eda.py
@@ -128,7 +125,6 @@ A análise inclui estatísticas descritivas, distribuição das culturas, correl
 Os registros extremos foram mantidos inicialmente, pois diferenças entre culturas podem produzir valores considerados extremos na distribuição geral.
 
 ### Treinamento
-
 ```powershell
 python src/train.py
 ```
@@ -154,13 +150,11 @@ O pré-processamento necessário é realizado dentro do pipeline, evitando ajust
 O `src/train.py` grava os relatórios, mas **preserva o modelo existente** em `models/model.joblib` por padrão. Para substituir intencionalmente o modelo publicado, utilize `python src/train.py --overwrite-model`, após verificar os resultados e criar um backup. O teste final não deve orientar novos ajustes de hiperparâmetros.
 
 ### Relatórios
-
 ```powershell
 python src/report.py
 ```
 
 Para visualizar o CSV gerado pelo treinamento e atualizar o gráfico de comparação (sem retreinar):
-
 ```powershell
 python src/cv_report.py
 python src/plot_cv.py
@@ -227,6 +221,8 @@ O projeto inclui testes para verificar:
 - Validação de pH e umidade.
 - Tratamento de valores inválidos ou ausentes.
 - Avisos para entradas fora das faixas de treinamento.
+- Consistência das colunas e métricas no CSV de comparação dos modelos.
+- Verificação do melhor F1-macro médio de validação cruzada entre os modelos.
 
 Para executar:
 
@@ -234,43 +230,44 @@ Para executar:
 python -m pytest tests/ -v
 ```
 
-**Resultado registrado:** 10 testes aprovados.
+**Resultado registrado:** 13 testes aprovados em Python 3.11.7 (Windows), incluindo os três testes de relatórios.
 
-Os testes também foram executados com sucesso em um segundo ambiente virtual, no qual a aplicação Streamlit iniciou e realizou uma previsão funcional.
+A versão anterior da suíte também foi executada em um segundo ambiente virtual. Após as correções, os 13 testes foram aprovados no ambiente principal; a aplicação pública também realizou uma previsão funcional.
 
 ## 8. Estrutura do projeto
 
 ```text
 AgroSmart-AI/
 ├── app/
-│   ├── main.py
-│   └── validation.py
+│   ├── main.py
+│   └── validation.py
 ├── artigo/
-│   ├── figuras/
-│   ├── comparacao_modelos_cv.csv
-│   └── metricas_por_classe.csv
+│   ├── figuras/
+│   ├── comparacao_modelos_cv.csv
+│   └── metricas_por_classe.csv
 ├── data/
-│   └── Crop_recommendation.csv
+│   └── Crop_recommendation.csv
 ├── models/
-│   └── model.joblib
+│   └── model.joblib
 ├── notebooks/
-│   └── analise_exploratoria_agrosmart.ipynb
+│   └── analise_exploratoria_agrosmart.ipynb
 ├── src/
-│   ├── inspect_data.py
-│   ├── eda.py
-│   ├── train.py
-│   ├── report.py
-│   ├── cv_report.py
-│   └── plot_cv.py
+│   ├── inspect_data.py
+│   ├── eda.py
+│   ├── train.py
+│   ├── report.py
+│   ├── cv_report.py
+│   └── plot_cv.py
 ├── tests/
-│   ├── test_pipeline.py
-│   └── test_validation.py
+│   ├── test_pipeline.py
+│   ├── test_validation.py
+│   └── test_reports.py
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
-O arquivo CSV permanece local e deve ser obtido pelo usuário na fonte original.
+O arquivo CSV permanece local e deve ser obtido pelo usuário na fonte original. O caminho mostrado em `data/` é necessário para treinamento e análise, mas o CSV não é versionado no GitHub.
 
 ## 9. Limitações e considerações éticas
 
@@ -307,10 +304,14 @@ Projeto desenvolvido para a disciplina de Inteligência Artificial, período 202
 
 **Docente:** Profa. Dra. Alana Oliveira.
 
-**Equipe:** identificar os integrantes na versão final do artigo.
+**Equipe:** 
+
+- AYSLAN GUILHERME DA LUZ DIAS
+- PEDRO EDUARDO PINHO COIMBRA 
+- HUGO LEONARDO SILVA MATOS 
+- ROMULO DE SOUSA VALE
 
 **Repositório:** https://github.com/Hugo0077/AgroSmart-AI
-
 
 ## 13. Verificações antes da entrega
 
