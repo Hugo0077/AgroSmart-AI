@@ -1,73 +1,309 @@
-# AgroSmart AI
+# 🌱 AgroSmart AI
 
-Protótipo acadêmico de classificação de culturas agrícolas a partir de sete variáveis de solo/clima, treinado sobre o **Crop Recommendation Dataset** (Atharva Ingle, Kaggle). **Não é recomendação agronômica validada para uso real.** As unidades de N, P, K e o período de referência da precipitação precisam de validação na fonte.
+**Sistema Inteligente de Recomendação de Cultivos Agrícolas Utilizando Aprendizado de Máquina**
 
-## Requisitos
+O AgroSmart AI é um protótipo acadêmico desenvolvido como trabalho final da disciplina de Inteligência Artificial, com o objetivo de classificar culturas agrícolas com base nas características do solo e nas condições climáticas.
 
-- Python 3.11 (ambiente utilizado no desenvolvimento)
-- Dependências de `requirements.txt`
-- Dataset `Crop_recommendation.csv` em `data/`
-- Pipeline treinado em `models/model.joblib`, gerado com `src/train.py`
+O sistema utiliza algoritmos de aprendizado de máquina supervisionado para analisar sete atributos e estimar a cultura agrícola mais compatível com os padrões presentes no conjunto de dados.
 
-## Instalação e execução (Windows / PowerShell)
+**Aviso:** trata-se de um sistema experimental. As previsões não constituem recomendações agronômicas profissionais e não garantem produtividade ou viabilidade de cultivo em condições reais.
+
+## 1. Tecnologias utilizadas
+
+- Python 3.11
+- pandas 3.1.1
+- scikit-learn 1.9.1
+- Streamlit 1.67.0
+- joblib 1.6.0
+- NumPy
+- Matplotlib
+- Seaborn
+- pytest
+- Git e GitHub
+
+As dependências utilizadas estão registradas no arquivo `requirements.txt`.
+
+## 2. Conjunto de dados
+
+**Nome:** Crop Recommendation Dataset  
+**Autor da publicação:** Atharva Ingle  
+**Plataforma:** Kaggle  
+**Fonte:** https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset
+
+O dataset contém:
+
+- 2.200 registros.
+- 7 atributos de entrada.
+- 22 culturas agrícolas.
+- 100 registros para cada cultura.
+- Nenhum valor ausente.
+- Nenhum registro completamente duplicado.
+
+### Atributos
+
+| Atributo | Descrição |
+|---|---|
+| N | Nitrogênio do solo |
+| P | Fósforo do solo |
+| K | Potássio do solo |
+| temperature | Temperatura em °C |
+| humidity | Umidade relativa (%) |
+| ph | pH do solo |
+| rainfall | Precipitação em mm |
+| label | Cultura agrícola — variável-alvo |
+
+As unidades de N, P e K, assim como o período de referência da precipitação, precisam de confirmação documental.
+
+**Licença:** verificar e registrar a licença indicada na página original do Kaggle antes de redistribuir o dataset.
+
+O CSV original não é incluído no repositório. Para reproduzir os experimentos, deve ser baixado diretamente da fonte.
+
+## 3. Instalação
+
+### Requisitos
+
+- Python 3.11
+- Git
+- Conexão com a internet para instalar dependências
+- Dataset original para reproduzir o treinamento
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/Hugo0077/AgroSmart-AI.git
+cd AgroSmart-AI
+```
+
+### Criar ambiente virtual — Windows PowerShell
 
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
+
+Instalar as dependências:
+
+```powershell
 python -m pip install -r requirements.txt
-python src/inspect_data.py
-python src/eda.py
-python src/train.py
-python src/report.py
-python -m pytest tests/ -v
+```
+
+### Preparação dos dados
+
+Baixe o dataset no Kaggle, extraia o arquivo CSV e coloque-o no seguinte caminho:
+
+```text
+data/Crop_recommendation.csv
+```
+
+## 4. Executar a aplicação
+
+Como o repositório inclui o pipeline treinado em `models/model.joblib`, não é necessário repetir o treinamento para utilizar a aplicação.
+
+Execute:
+
+```powershell
 python -m streamlit run app/main.py
 ```
 
-Abrir `http://localhost:8501` caso o navegador não abra automaticamente.
+Acesse:
 
-> Atenção: `src/train.py` e `src/report.py` são os scripts de treinamento e avaliação produzidos durante o trabalho; mantenha-os no repositório. `report.py` pressupõe a mesma divisão estratificada de teste (15%, `random_state=42`) usada em `train.py`.
+http://localhost:8501
 
-## Conjunto de dados
+A interface permite informar os sete atributos e apresenta a cultura prevista, sua probabilidade estimada, as três culturas mais prováveis e a importância global dos atributos do modelo.
 
-Fonte: https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset
+O sistema também valida entradas e apresenta avisos quando os dados informados estão fora das faixas observadas no treinamento.
 
-Formato esperado: 2.200 linhas, 7 entradas (`N`, `P`, `K`, `temperature`, `humidity`, `ph`, `rainfall`) e rótulo `label` com 22 culturas. Consultar a licença e atribuição indicadas na página do fornecedor antes de redistribuir o CSV.
+## 5. Reproduzir os experimentos
 
-## Modelagem e resultados (execução de 23/11/2026)
+### Análise exploratória
 
-- Partição estratificada: 70% treino, 15% validação e 15% teste; semente 42.
-- Baseline `DummyClassifier`, `RandomForestClassifier` e `SVC`.
-- Seleção com F1-macro na validação; busca com `GridSearchCV` (3 folds) no treino.
-- Random Forest selecionado: `n_estimators=100`, `max_depth=15`.
-- Teste (330 exemplos): acurácia **0,993939**, F1-macro **0,993933**, AUC-ROC OvR **1,0**; 2 erros.
-- Importância global via redução de impureza: precipitação (0,236077), umidade (0,206864), K (0,167713), P (0,149242), N (0,112458), temperatura (0,072392), pH (0,055254).
+```powershell
+python src/inspect_data.py
+python src/eda.py
+```
 
-**Limitações:** o desempenho foi medido em uma separação do mesmo dataset, não em amostras agrícolas externas. Probabilidades de classificação não são garantias de rendimento ou adequação real; a calibração não foi medida. Não utilizar a ferramenta como recomendação profissional.
+A análise inclui estatísticas descritivas, distribuição das culturas, correlações e identificação de possíveis outliers pelo método IQR.
 
-## Testes
+Os registros extremos foram mantidos inicialmente, pois diferenças entre culturas podem produzir valores considerados extremos na distribuição geral.
 
-`python -m pytest tests/ -v` inclui verificações do pipeline persistido e das regras de validação. Os testes do pipeline exigem `models/model.joblib` gerado anteriormente.
+### Treinamento
 
-## Estrutura esperada
+```powershell
+python src/train.py
+```
+
+O treinamento utiliza:
+
+- 70% dos registros para treinamento.
+- 15% para validação.
+- 15% para teste.
+- Divisão estratificada.
+- Semente aleatória 42.
+- Busca de hiperparâmetros com GridSearchCV e três partições de validação cruzada.
+- F1-macro como métrica principal de comparação.
+
+São avaliadas três abordagens:
+
+1. DummyClassifier — baseline.
+2. Random Forest.
+3. Support Vector Machine (SVM).
+
+O pré-processamento necessário é realizado dentro do pipeline, evitando ajustar transformações com informações do conjunto de teste.
+
+A execução do treinamento também salva o pipeline selecionado em `models/model.joblib`. Portanto, uma nova execução pode substituir o modelo existente.
+
+### Relatórios
+
+```powershell
+python src/report.py
+```
+
+Para reproduzir o relatório adicional de validação cruzada e seu gráfico:
+
+```powershell
+python src/cv_report.py
+python src/plot_cv.py
+```
+
+## 6. Resultados experimentais
+
+### Comparação dos modelos
+
+| Modelo | F1-macro médio CV | Desvio-padrão CV |
+|---|---:|---:|
+| DummyClassifier | 0,003899 | 0,000003 |
+| Random Forest | **0,992861** | **0,000918** |
+| SVM | 0,986948 | 0,003223 |
+
+O Random Forest apresentou o melhor desempenho de validação entre os modelos avaliados.
+
+**Hiperparâmetros selecionados:**
+
+- `n_estimators = 100`
+- `max_depth = 15`
+- `random_state = 42`
+
+### Avaliação final do Random Forest
+
+| Métrica | Resultado |
+|---|---:|
+| Acurácia | 0,993939 |
+| F1-macro | 0,993933 |
+| AUC-ROC multiclasse OvR | 1,000000 |
+| Amostras de teste | 330 |
+| Classificações corretas | 328 |
+| Classificações incorretas | 2 |
+
+Os erros observados foram:
+
+- 1 amostra de blackgram classificada como milho.
+- 1 amostra de arroz classificada como juta.
+
+### Importância dos atributos
+
+| Atributo | Importância |
+|---|---:|
+| Precipitação | 0,236077 |
+| Umidade | 0,206864 |
+| Potássio | 0,167713 |
+| Fósforo | 0,149242 |
+| Nitrogênio | 0,112458 |
+| Temperatura | 0,072392 |
+| pH | 0,055254 |
+
+Essas importâncias foram calculadas por redução de impureza no Random Forest e não demonstram relações causais.
+
+Os resultados apresentados foram obtidos experimentalmente no conjunto de dados utilizado. Não representam garantia de desempenho em propriedades agrícolas reais.
+
+## 7. Testes automatizados
+
+O projeto inclui testes para verificar:
+
+- Presença dos sete atributos.
+- Retorno de uma classe válida.
+- Probabilidades entre 0 e 1 e soma igual a 1.
+- Rejeição de colunas ausentes.
+- Validação de pH e umidade.
+- Tratamento de valores inválidos ou ausentes.
+- Avisos para entradas fora das faixas de treinamento.
+
+Para executar:
+
+```powershell
+python -m pytest tests/ -v
+```
+
+**Resultado registrado:** 10 testes aprovados.
+
+Os testes também foram executados com sucesso em um segundo ambiente virtual, no qual a aplicação Streamlit iniciou e realizou uma previsão funcional.
+
+## 8. Estrutura do projeto
 
 ```text
 AgroSmart-AI/
-  app/main.py
-  app/validation.py
-  data/Crop_recommendation.csv
-  src/inspect_data.py
-  src/eda.py
-  src/train.py
-  src/report.py
-  models/model.joblib
-  tests/test_pipeline.py
-  tests/test_validation.py
-  notebooks/
-  artigo/figuras/
-  requirements.txt
-  README.md
+├── app/
+│   ├── main.py
+│   └── validation.py
+├── artigo/
+│   ├── figuras/
+│   ├── comparacao_modelos_cv.csv
+│   └── metricas_por_classe.csv
+├── data/
+│   └── Crop_recommendation.csv
+├── models/
+│   └── model.joblib
+├── notebooks/
+│   └── analise_exploratoria_agrosmart.ipynb
+├── src/
+│   ├── inspect_data.py
+│   ├── eda.py
+│   ├── train.py
+│   ├── report.py
+│   ├── cv_report.py
+│   └── plot_cv.py
+├── tests/
+│   ├── test_pipeline.py
+│   └── test_validation.py
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
-## Reprodutibilidade e apresentação
+O arquivo CSV permanece local e deve ser obtido pelo usuário na fonte original.
 
-Os resultados e figuras devem ser obtidos executando os scripts e registrados no artigo SBC. Inclua no artigo a declaração de uso de ferramentas de IA generativa, como exige a disciplina. O vídeo deve demonstrar a entrada dos sete campos, a previsão de arroz para um registro de exemplo, a visualização de probabilidades e a explicação de limitações. Não confundir teste funcional com estimativa de generalização.
+## 9. Limitações e considerações éticas
+
+O AgroSmart AI foi desenvolvido para fins acadêmicos e apresenta limitações importantes:
+
+- O dataset não foi validado pelos autores deste projeto em propriedades agrícolas brasileiras.
+- As previsões dependem dos padrões presentes no conjunto de dados.
+- Os resultados de teste não garantem generalização para regiões ou condições não representadas.
+- As probabilidades estimadas não foram submetidas a uma avaliação específica de calibração.
+- O sistema não considera todos os fatores relevantes para uma decisão agrícola, como custo, disponibilidade hídrica, pragas, produtividade e condições locais.
+- A origem e representatividade dos dados precisam ser consideradas antes de qualquer aplicação prática.
+
+A utilização da ferramenta deve ser restrita a demonstrações e experimentos acadêmicos, não substituindo profissionais da área agronômica.
+
+## 10. Vídeo de demonstração
+
+**Link:** a adicionar após a gravação.
+
+O vídeo demonstrará a aplicação em funcionamento, as entradas utilizadas, os resultados do modelo e suas limitações.
+
+## 11. Uso de inteligência artificial generativa
+
+Ferramentas de IA generativa foram utilizadas como apoio ao planejamento, desenvolvimento, revisão de código, depuração e organização documental.
+
+Os resultados numéricos apresentados são provenientes dos experimentos realizados com os modelos de aprendizado de máquina.
+
+O artigo científico incluirá uma declaração específica de uso de IA generativa conforme as exigências da disciplina.
+
+## 12. Contexto acadêmico
+
+Projeto desenvolvido para a disciplina de Inteligência Artificial, período 2026.2, da Universidade Federal do Maranhão (UFMA).
+
+**Docente:** Profa. Dra. Alana Oliveira.
+
+**Equipe:** identificar os integrantes na versão final do artigo.
+
+**Repositório:** https://github.com/Hugo0077/AgroSmart-AI

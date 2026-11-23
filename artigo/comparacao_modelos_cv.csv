@@ -1,0 +1,4 @@
+﻿Modelo,F1_macro_media_CV,F1_macro_desvio_CV,Melhores_parametros
+DummyClassifier,0.003898528350291879,3.424442028744378e-06,{}
+Random Forest,0.9928605498820285,0.0009178446147467793,"{'model__max_depth': 15, 'model__n_estimators': 100}"
+SVM,0.9869477918517635,0.003222847021722631,"{'model__C': 10, 'model__kernel': 'rbf'}"
