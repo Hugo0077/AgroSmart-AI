@@ -1,5 +1,6 @@
 
 from pathlib import Path
+import argparse
 import pandas as pd
 import joblib
 
@@ -16,6 +17,13 @@ from sklearn.metrics import (
     confusion_matrix,
     roc_auc_score,
 )
+
+parser = argparse.ArgumentParser(description="Treina e compara os modelos agrícolas.")
+parser.add_argument(
+    "--overwrite-model", action="store_true",
+    help="Substitui models/model.joblib (sem esta opção, preserva o modelo existente).",
+)
+args = parser.parse_args()
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "artigo"
@@ -105,10 +113,11 @@ for name, (pipeline, params) in models.items():
     val_f1 = f1_score(y_val, val_pred, average="macro")
 
     results[name] = {
-        "cv_f1_mean": cv_mean,
-        "cv_f1_std": cv_std,
-        "validation_f1": val_f1,
-        "params": search.best_params_,
+        "Modelo": "DummyClassifier" if name == "Dummy" else name,
+        "F1_macro_media_CV": float(cv_mean),
+        "F1_macro_desvio_CV": float(cv_std),
+        "F1_macro_validacao": float(val_f1),
+        "Melhores_parametros": str(search.best_params_),
     }
 
     print("F1 validação:", round(val_f1, 4))
@@ -122,7 +131,7 @@ for name, (pipeline, params) in models.items():
 # Comparação dos três modelos.
 print("\n=== COMPARAÇÃO ===")
 
-comparison = pd.DataFrame(results).T
+comparison = pd.DataFrame(list(results.values()))
 print(comparison.to_string())
 
 # Exportar tabela para o artigo científico.
@@ -130,7 +139,7 @@ comparison_path = OUTPUT / "comparacao_modelos_cv.csv"
 
 comparison.to_csv(
     comparison_path,
-    index_label="Modelo",
+    index=False,
     encoding="utf-8-sig",
 )
 
@@ -177,7 +186,10 @@ print(
 model_path = ROOT / "models" / "model.joblib"
 model_path.parent.mkdir(parents=True, exist_ok=True)
 
-joblib.dump(best_model, model_path)
-
-print("\nModelo salvo em:", model_path)
+if model_path.exists() and not args.overwrite_model:
+    print("\nModelo existente preservado:", model_path)
+    print("Use --overwrite-model somente se quiser substituir a versão oficial.")
+else:
+    joblib.dump(best_model, model_path)
+    print("\nModelo salvo em:", model_path)
 print("\nTreinamento concluído com sucesso!")

@@ -54,7 +54,7 @@ O dataset contém:
 
 As unidades de N, P e K, assim como o período de referência da precipitação, precisam de confirmação documental.
 
-**Licença:** verificar e registrar a licença indicada na página original do Kaggle antes de redistribuir o dataset.
+**Licença do dataset:** confirmar na página original do Kaggle e registrar a versão consultada antes da entrega. A cópia do CSV não é redistribuída neste repositório.
 
 O CSV original não é incluído no repositório. Para reproduzir os experimentos, deve ser baixado diretamente da fonte.
 
@@ -66,6 +66,7 @@ O CSV original não é incluído no repositório. Para reproduzir os experimento
 - Git
 - Conexão com a internet para instalar dependências
 - Dataset original para reproduzir o treinamento
+- A aplicação online não precisa do CSV original, pois utiliza o pipeline salvo
 
 Clone o repositório:
 
@@ -150,7 +151,7 @@ São avaliadas três abordagens:
 
 O pré-processamento necessário é realizado dentro do pipeline, evitando ajustar transformações com informações do conjunto de teste.
 
-A execução do treinamento também salva o pipeline selecionado em `models/model.joblib`. Portanto, uma nova execução pode substituir o modelo existente.
+O `src/train.py` grava os relatórios, mas **preserva o modelo existente** em `models/model.joblib` por padrão. Para substituir intencionalmente o modelo publicado, utilize `python src/train.py --overwrite-model`, após verificar os resultados e criar um backup. O teste final não deve orientar novos ajustes de hiperparâmetros.
 
 ### Relatórios
 
@@ -158,7 +159,7 @@ A execução do treinamento também salva o pipeline selecionado em `models/mode
 python src/report.py
 ```
 
-Para reproduzir o relatório adicional de validação cruzada e seu gráfico:
+Para visualizar o CSV gerado pelo treinamento e atualizar o gráfico de comparação (sem retreinar):
 
 ```powershell
 python src/cv_report.py
@@ -175,7 +176,7 @@ python src/plot_cv.py
 | Random Forest | **0,992861** | **0,000918** |
 | SVM | 0,986948 | 0,003223 |
 
-O Random Forest apresentou o melhor desempenho de validação entre os modelos avaliados.
+O Random Forest apresentou o melhor desempenho de validação entre os modelos avaliados. Os desvios-padrão refletem três partições de validação cruzada. O relatório `artigo/comparacao_modelos_cv.csv` inclui também o F1-macro no conjunto de validação.
 
 **Hiperparâmetros selecionados:**
 
@@ -288,6 +289,8 @@ A utilização da ferramenta deve ser restrita a demonstrações e experimentos 
 
 **Link:** a adicionar após a gravação.
 
+**Aplicação pública:** https://agrosmart-ai-v2.streamlit.app
+
 O vídeo demonstrará a aplicação em funcionamento, as entradas utilizadas, os resultados do modelo e suas limitações.
 
 ## 11. Uso de inteligência artificial generativa
@@ -307,3 +310,12 @@ Projeto desenvolvido para a disciplina de Inteligência Artificial, período 202
 **Equipe:** identificar os integrantes na versão final do artigo.
 
 **Repositório:** https://github.com/Hugo0077/AgroSmart-AI
+
+
+## 13. Verificações antes da entrega
+
+- Confirmar versão e licença do dataset diretamente na fonte.
+- Executar `python -m pytest tests/ -q` após qualquer atualização.
+- Conferir a publicação no Streamlit Community Cloud e testar a previsão do arroz.
+- Inserir o link final do vídeo na seção 10.
+- Executar `python src/train.py` em uma instalação separada para confirmar a reprodução do treinamento, preservando o modelo publicado.

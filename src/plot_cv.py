@@ -11,6 +11,10 @@ OUTPUT = ROOT / "artigo" / "figuras"
 OUTPUT.mkdir(parents=True, exist_ok=True)
 
 df = pd.read_csv(CSV_PATH)
+required = {"Modelo", "F1_macro_media_CV", "F1_macro_desvio_CV"}
+missing = required - set(df.columns)
+if missing:
+    raise ValueError(f"Colunas ausentes: {sorted(missing)}. Execute python src/train.py.")
 
 fig, ax = plt.subplots(figsize=(9, 5))
 
