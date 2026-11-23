@@ -13,6 +13,9 @@ __pycache__/
 .streamlit/secrets.toml
 .vscode/
 
+# Backup do modelo
+models/model_backup.joblib
+
 # Dataset original
 data/*.csv
 
